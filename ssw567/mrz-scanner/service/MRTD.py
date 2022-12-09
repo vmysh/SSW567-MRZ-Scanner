@@ -41,7 +41,7 @@ check4=-1
 
 #Requirement 1: Function mocking the hardware device scanner 
 def scanMRZ():
-    print("Scanning MRZ")
+    print("- - - Scanning MRZ - - -")
     line1="PUTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<"
     line2="L898902C36UTO7408122F1204159ZE184226B<<<<<<<1"
     return line1, line2
@@ -85,19 +85,27 @@ def decodeStrings(line1,line2):
     line2Array.append(check3)
     line2Array.append(persNum)
     line2Array.append(check4)
+
+    return line1Array, line2Array
     
 #Requirement3: Encode
 #function to mock a call to a database to return information 
 def getFromDatabase():
-    dbInfo=["P","UTO","ERIKSSONANNAMARIA","L898902C3",6, "UTO",740812, 2, "F",120415, 9 ,"ZE184226B",1]
+    dbInfo=["P","UTO","ERIKSSONANNAMARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
     return dbInfo
-
+    
+def calcCheck(): 
+    print("check")
 def encodeStrings(dbInfo):
+    mrzLine1=""
+    mrzLine2=""
     dbLine1=dbInfo[0:3]
     dbLine2=dbInfo[3:]
     print(dbLine1)
     print(dbLine2)
     #encode requirement code here
+
+
 
 #Requirement4: reporting miss matching information between encode and decode
 def reportDifference():
