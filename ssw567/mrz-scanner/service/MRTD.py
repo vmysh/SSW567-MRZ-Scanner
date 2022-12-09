@@ -42,15 +42,24 @@ check4=-1
 #Requirement 1: Function mocking the hardware device scanner 
 def scanMRZ():
     print("Scanning MRZ")
+    line1="PUTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<"
+    line2="L898902C36UTO7408122F1204159ZE184226B<<<<<<<1"
+    return line1, line2
     #Should return line 1 and line 2 
 
 #Requirement 2: Decoding the Strings
 def decodeStrings(line1,line2):
+    line1Array=[]
+    line2Array=[]
     #line1
     passportType=line1[0]
     issCountry=line1[1:4]
     nameHold=line1[4:]
     nameHold=nameHold.replace('<',"")   #Need to get a way to get name separated
+    #creating Array for Comparison Purposes
+    line1Array.append(passportType)
+    line1Array.append(issCountry)
+    line1Array.append(nameHold)
 
     #line2
     passNum=line2[0:9]
@@ -65,6 +74,17 @@ def decodeStrings(line1,line2):
     persNum=persNum.replace('<',"")
     check4=persNum[-1]
     persNum=persNum[:-1]
+    #creating Array for Comparison Purposes
+    line2Array.append(passNum)
+    line2Array.append(check1)
+    line2Array.append(countrCode)
+    line2Array.append(birthDate)
+    line2Array.append(check2)
+    line2Array.append(gender)
+    line2Array.append(expDate)
+    line2Array.append(check3)
+    line2Array.append(persNum)
+    line2Array.append(check4)
     
 #Requirement3: Encode
 def encodeStrings():
@@ -77,5 +97,7 @@ def reportDifference():
     #Code Here to Report the Differences
    
 
-line1="PUTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<"
-line2="L898902C36UTO7408122F1204159ZE184226B<<<<<<<1"
+
+
+line1,line2 = scanMRZ()
+#encodeStrings(line1,line2)
