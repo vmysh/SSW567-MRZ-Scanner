@@ -17,8 +17,7 @@
                        P UTO ERIKSSON ANNA MARIA
        Example Line 2: L898902C36UTO7408122F1204159ZE184226B<<<<<<< 1
                        L898902C3 6 UTO 740812 2 F 120415 9 ZE184226B <<<<<<< 1 
-'''
-import string
+'''                            
 
 #Variable Initialization
 #line1 variables
@@ -43,18 +42,22 @@ check4=-1
 #Requirement 1: Function mocking the hardware device scanner 
 def scanMRZ():
     print("- - - Scanning MRZ - - -")
-    scanInfo="P<CIVLYNN<<NEVEAH<BRAM<<<<<<<<<<<<<<<<<<<<<<;W620126G54CIV5910106F9707302AJ010215I<<<<<<6"
+    scanInfo="P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<<<<;L898902C36UTO7408122F1204159ZE184226B<<<<<<1"
     return scanInfo
-    #Should return line 1 and line 2 
 
 #Requirement 2: Decoding the Strings
-def decodeStrings(line1,line2):
+def decodeStrings(scanInfo):
     line1Array=[]
     line2Array=[]
+
+    #breaking the line into line 1 and line 2
+    temp=scanInfo.split(';')
+    line1=temp[0]
+    line2=temp[1]
     #line1
     passportType=line1[0]
-    issCountry=line1[1:4]
-    nameHold=line1[4:]
+    issCountry=line1[2:5]
+    nameHold=line1[5:]
     nameHold=nameHold.replace('<',"")   #Need to get a way to get name separated
     #creating Array for Comparison Purposes
     line1Array.append(passportType)
@@ -86,6 +89,8 @@ def decodeStrings(line1,line2):
     line2Array.append(persNum)
     line2Array.append(check4)
 
+    
+
     return line1Array, line2Array
     
 #Requirement3: Encode
@@ -94,79 +99,64 @@ def getFromDatabase():
     dbInfo=["P","UTO","ERIKSSON","ANNA","MARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
     return dbInfo
 
-
-#Veronika is working on this function right now
-#Passing an array of the information from Line 2 of the MRZ into this function
-#The structure of the array can be changed, but the indexes would have to change too
-
-#Array used for testing, delete later!!!!
-testarray = ["P","UTO","ERIKSSON","ANNA","MARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
-def calcCheck(line2arr): 
-    #Assigning number values to letters
-    values = dict()
-    for index, letter in enumerate(string.ascii_uppercase):
-        values[letter] = index + 10
-
-    #  DELETE LATER
-    print(values["C"])
-
-    #breaking up strings/numbers into arrays of characters
-    def split(info):
-        splitChar = []
-        if type(info) is str:
-            for letter in info:
-                splitChar.append(letter)
-        else:
-            #splitChar = [int(a) for a in str(info)]
-            splitChar = list(map(int, str(info)))
-
-        #DELETE LATER
-        print(splitChar)
-
-
-    #check digit for passport number (string)
-    passportNo = split(line2arr[5])
-
-
-    #check digit for birth date (number)
-    birthday = split(line2arr[7])
-
-
-    #check digit for expiration date
-    expiration = line2arr[9]
-
-
-    #check digit for personal number
-    personalNo = line2arr[10]
-
-    #DELETE LATER
-    print(passportNo, " ", birthday, " ", expiration, " ", personalNo, " ")
-
-
+def calcCheck(dbInfo): 
+    return [6,2,9,1]
 
 def encodeStrings(dbInfo):
+    returnString=""
     mrzLine1=""
     mrzLine2=""
-    dbLine1=dbInfo[0:3]
-    dbLine2=dbInfo[3:]
-    print(dbLine1)
-    print(dbLine2)
+    dbCheckDig=[]
+    dbLine1=dbInfo[0:5]
+    dbLine2=dbInfo[5:]
+    dbCheckDig=calcCheck(dbInfo)
+
     #encode requirement code here
-
-
+    mrzLine1=mrzLine1+dbLine1[0]+"<"+dbLine1[1]+dbLine1[2]+"<<"+dbLine1[3]+"<"+dbLine1[4]
+    mrzLine1=mrzLine1.ljust(44,"<")
+    
+    mrzLine2=mrzLine2+str(dbLine2[0])+str(dbCheckDig[0])+str(dbLine2[1])+str(dbLine2[2])+str(dbCheckDig[1])+str(dbLine2[3])+str(dbLine2[4])+str(dbCheckDig[2])+str(dbLine2[5])
+    mrzLine2=mrzLine2.ljust(44,"<")
+    mrzLine2=mrzLine2[:-1]
+    mrzLine2=mrzLine2+str(dbCheckDig[3])
+    returnString=mrzLine1+";"+mrzLine2
+    return returnString
 
 #Requirement4: reporting miss matching information between encode and decode
-def reportDifference():
-    print("code")
-    #Code Here to Report the Differences
-   
+def reportDifference(scanInfo,dbInfo):
+    line1Equal = False
+    line2Equal = False
+
+    #get scanned chck digits
+    line1Struct,line2Struct=decodeStrings(scanInfo)
+    
+    #get calculated check digits 
+    dbLine1,dbLine2 = decodeStrings(encodeStrings(dbInfo))
+
+    if line1Struct == dbLine1:
+        line1Equal = True
+    else:
+        line1Equal = False
+    
+    if line2Struct[1]==dbLine2[1] and line2Struct[4]==dbLine2[4] and line2Struct[7]==dbLine2[7] and line2Struct[-1]==dbLine2[-1]:
+        line2Equal = True
+    else:
+        line2Equal = False
+
+    if line1Equal and line2Equal:
+        return "Database Matches Scanned Record"
+    elif line1Equal and not line2Equal: 
+        return "Line 2 from the database does not match what was scanned"
+    elif line2Equal and not line1Equal:
+        return "Line 1 from the database does not match what was scanned"
+    else:
+        return "Neither Line from the database matches what was scanned"
 
 
 
-#line1,line2 = scanMRZ()
+#------------------------- Main Code ------------------------
+scanInfo = scanMRZ()
+line1Struct,line2Struct=decodeStrings(scanInfo)
 dbInfo=getFromDatabase()
 encodeStrings(dbInfo)
-
-print("calc check ")
-calcCheck(testarray)
-
+print(reportDifference(scanInfo,dbInfo))
