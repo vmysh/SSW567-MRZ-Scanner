@@ -87,8 +87,16 @@ def decodeStrings(line1,line2):
     line2Array.append(check4)
     
 #Requirement3: Encode
-def encodeStrings():
-    print("code")
+#function to mock a call to a database to return information 
+def getFromDatabase():
+    dbInfo=["P","UTO","ERIKSSONANNAMARIA","L898902C3",6, "UTO",740812, 2, "F",120415, 9 ,"ZE184226B",1]
+    return dbInfo
+
+def encodeStrings(dbInfo):
+    dbLine1=dbInfo[0:3]
+    dbLine2=dbInfo[3:]
+    print(dbLine1)
+    print(dbLine2)
     #encode requirement code here
 
 #Requirement4: reporting miss matching information between encode and decode
@@ -100,4 +108,5 @@ def reportDifference():
 
 
 line1,line2 = scanMRZ()
-#encodeStrings(line1,line2)
+dbInfo=getFromDatabase()
+encodeStrings(dbInfo)
