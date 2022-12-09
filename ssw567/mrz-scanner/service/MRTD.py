@@ -42,9 +42,8 @@ check4=-1
 #Requirement 1: Function mocking the hardware device scanner 
 def scanMRZ():
     print("- - - Scanning MRZ - - -")
-    line1="PUTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<"
-    line2="L898902C36UTO7408122F1204159ZE184226B<<<<<<<1"
-    return line1, line2
+    scanInfo="P<CIVLYNN<<NEVEAH<BRAM<<<<<<<<<<<<<<<<<<<<<<;W620126G54CIV5910106F9707302AJ010215I<<<<<<6"
+    return scanInfo
     #Should return line 1 and line 2 
 
 #Requirement 2: Decoding the Strings
@@ -93,7 +92,7 @@ def decodeStrings(line1,line2):
 def getFromDatabase():
     dbInfo=["P","UTO","ERIKSSONANNAMARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
     return dbInfo
-    
+
 def calcCheck(): 
     print("check")
 def encodeStrings(dbInfo):
