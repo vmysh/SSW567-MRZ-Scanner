@@ -93,8 +93,11 @@ def getFromDatabase():
     dbInfo=["P","UTO","ERIKSSONANNAMARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
     return dbInfo
 
+
+#Veronika is working on this function right now
 def calcCheck(): 
     print("check")
+    
 def encodeStrings(dbInfo):
     mrzLine1=""
     mrzLine2=""
