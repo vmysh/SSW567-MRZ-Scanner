@@ -18,6 +18,7 @@
        Example Line 2: L898902C36UTO7408122F1204159ZE184226B<<<<<<< 1
                        L898902C3 6 UTO 740812 2 F 120415 9 ZE184226B <<<<<<< 1 
 '''
+import string
 
 #Variable Initialization
 #line1 variables
@@ -90,14 +91,59 @@ def decodeStrings(line1,line2):
 #Requirement3: Encode
 #function to mock a call to a database to return information 
 def getFromDatabase():
-    dbInfo=["P","UTO","ERIKSSONANNAMARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
+    dbInfo=["P","UTO","ERIKSSON","ANNA","MARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
     return dbInfo
 
 
 #Veronika is working on this function right now
-def calcCheck(): 
-    print("check")
-    
+#Passing an array of the information from Line 2 of the MRZ into this function
+#The structure of the array can be changed, but the indexes would have to change too
+
+#Array used for testing, delete later!!!!
+testarray = ["P","UTO","ERIKSSON","ANNA","MARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
+def calcCheck(line2arr): 
+    #Assigning number values to letters
+    values = dict()
+    for index, letter in enumerate(string.ascii_uppercase):
+        values[letter] = index + 10
+
+    #  DELETE LATER
+    print(values["C"])
+
+    #breaking up strings/numbers into arrays of characters
+    def split(info):
+        splitChar = []
+        if type(info) is str:
+            for letter in info:
+                splitChar.append(letter)
+        else:
+            #splitChar = [int(a) for a in str(info)]
+            splitChar = list(map(int, str(info)))
+
+        #DELETE LATER
+        print(splitChar)
+
+
+    #check digit for passport number (string)
+    passportNo = split(line2arr[5])
+
+
+    #check digit for birth date (number)
+    birthday = split(line2arr[7])
+
+
+    #check digit for expiration date
+    expiration = line2arr[9]
+
+
+    #check digit for personal number
+    personalNo = line2arr[10]
+
+    #DELETE LATER
+    print(passportNo, " ", birthday, " ", expiration, " ", personalNo, " ")
+
+
+
 def encodeStrings(dbInfo):
     mrzLine1=""
     mrzLine2=""
@@ -117,6 +163,10 @@ def reportDifference():
 
 
 
-line1,line2 = scanMRZ()
+#line1,line2 = scanMRZ()
 dbInfo=getFromDatabase()
 encodeStrings(dbInfo)
+
+print("calc check ")
+calcCheck(testarray)
+
