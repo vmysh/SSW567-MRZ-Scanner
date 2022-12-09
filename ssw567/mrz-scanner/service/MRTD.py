@@ -146,7 +146,14 @@ def reportDifference(scanInfo,dbInfo):
     if line1Equal and line2Equal:
         return "Database Matches Scanned Record"
     elif line1Equal and not line2Equal: 
-        return "Line 2 from the database does not match what was scanned"
+        if line2Struct[1]!=dbLine2[1]:
+            return "Line 2 from the database does not match what was scanned check digit 1 did not match"
+        if line2Struct[4]!=dbLine2[4]:
+            return "Line 2 from the database does not match what was scanned check digit 2 did not match"
+        if line2Struct[7]!=dbLine2[7]:
+            return "Line 2 from the database does not match what was scanned check digit 3 did not match"
+        if line2Struct[-1]!=dbLine2[-1]:
+            return "Line 2 from the database does not match what was scanned check digit 4 did not match"
     elif line2Equal and not line1Equal:
         return "Line 1 from the database does not match what was scanned"
     else:
