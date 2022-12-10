@@ -238,8 +238,12 @@ def reportDifference(scanInfo,dbInfo):
 
 
 #------------------------- Main Code ------------------------
-scanInfo = scanMRZ()
-line1Struct,line2Struct=decodeStrings(scanInfo)
-dbInfo=getFromDatabase()
-encodeStrings(dbInfo)
-print(reportDifference(scanInfo,dbInfo))
+def startFunc():
+    scanInfo = scanMRZ()
+    line1Struct,line2Struct=decodeStrings(scanInfo)
+    dbInfo=getFromDatabase()
+    encodeStrings(dbInfo)
+    print(reportDifference(scanInfo,dbInfo))
+
+if __name__ == '__main__':
+    startFunc()
