@@ -1,5 +1,5 @@
 import unittest
-from MRTD import *
+from for_test_MRTD import *
 
 class TestMRTD(unittest.TestCase):
     # Define test cases that input has two line or not
