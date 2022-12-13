@@ -254,10 +254,10 @@ def startFunc(scanValue, dbValue):
         scanInfo = scanValue
         dbInfo = dbValue
     else:
-        scanInfo = scanMRZ()
-        dbInfo=getFromDatabase()
-    line1Struct,line2Struct=decodeStrings(scanInfo)
-    encodeStrings(dbInfo)
+        scanInfo = scan_mrz()
+        dbInfo=get_from_database()
+    line1Struct,line2Struct=decode_strings(scanInfo)
+    encode_strings(dbInfo)
     #print(reportDifference(scanInfo,dbInfo))
 
 if __name__ == '__main__':
