@@ -20,230 +20,241 @@
 '''                            
 
 import string
-#Variable Initialization
-#line1 variables
-passportType=""
-issCountry=""
-nameHold=""
 
-#line1 variables
-passNum=-1
-countrCode=""
-birthDate=-1
-gender=""
-expDate=-1
-persNum=-1
+# Variable Initialization
+# line1 variables
+PASSPORTTYPE = ""
+ISSCOUNTRY = ""
+NAMEHOLD = ""
 
-#check variables
-check1=-1
-check2=-1
-check3=-1
-check4=-1
+# line1 variables
+PASSNUM = -1
+COUNRCODE = ""
+BIRTHDATE = -1
+GENDER = ""
+EXPDATE = -1
+PERSNUM = -1
 
-#Requirement 1: Function mocking the hardware device scanner 
-def scanMRZ():
+# check variables
+CHECK1 = -1
+CHECK2 = -1
+CHECK3 = -1
+CHECK4 = -1
+
+
+# Requirement 1: Function mocking the hardware device scanner
+def scan_mrz():
     print("- - - Scanning MRZ - - -")
-    scanInfo="P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<<<<;L898902C36UTO7408122F1204159ZE184226B<<<<<<1"
-    return scanInfo
+    scan_info="P<REUMCFARLAND<<TRINITY<AMITY<<<<<<<<<<<<<<<;Q683170H11REU6403131M6904133UK128819I<<<<<<9"
+    return scan_info
 
-#Requirement 2: Decoding the Strings
-def decodeStrings(scanInfo):
-    line1Array=[]
-    line2Array=[]
 
-    #breaking the line into line 1 and line 2
-    temp=scanInfo.split(';')
-    line1=temp[0]
-    line2=temp[1]
-    #line1
-    passportType=line1[0]
-    issCountry=line1[2:5]
-    nameHold=line1[5:]
-    nameHold=nameHold.replace('<',"")   #Need to get a way to get name separated
-    #creating Array for Comparison Purposes
-    line1Array.append(passportType)
-    line1Array.append(issCountry)
-    line1Array.append(nameHold)
+# Requirement 2: Decoding the Strings
+def decode_strings(scan_info):
+    line1_array = []
+    line2_array = []
 
-    #line2
-    passNum=line2[0:9]
-    check1=line2[9]
-    countrCode=line2[10:13]
-    birthDate=line2[13:19]
-    check2=line2[19]
-    gender=line2[20]
-    expDate=line2[21:27]
-    check3=line2[27]
-    persNum=line2[28:]
-    persNum=persNum.replace('<',"")
-    check4=persNum[-1]
-    persNum=persNum[:-1]
-    #creating Array for Comparison Purposes
-    line2Array.append(passNum)
-    line2Array.append(check1)
-    line2Array.append(countrCode)
-    line2Array.append(birthDate)
-    line2Array.append(check2)
-    line2Array.append(gender)
-    line2Array.append(expDate)
-    line2Array.append(check3)
-    line2Array.append(persNum)
-    line2Array.append(check4)
+    # breaking the line into line 1 and line 2
+    temp = scan_info.split(';')
+    line1 = temp[0]
+    line2 = temp[1]
+    # line1
+    passport_type = line1[0]
+    iss_country = line1[2:5]
+    name_hold = line1[5:]
+    name_hold = name_hold.replace('<', "")  # Need to get a way to get name separated
+    # creating Array for Comparison Purposes
+    line1_array.append(passport_type)
+    line1_array.append(iss_country)
+    line1_array.append(name_hold)
 
-    
+    # defining as global variable
+    global PASSNUM
+    global BIRTHDATE
+    global GENDER
+    global EXPDATE
+    global PERSNUM
+    global CHECK1
+    global CHECK2
+    global CHECK3
+    global CHECK4
 
-    return line1Array, line2Array
-    
-#Requirement3: Encode
-#function to mock a call to a database to return information 
-def getFromDatabase():
-    dbInfo=["P","UTO","ERIKSSON","ANNA","MARIA","L898902C3", "UTO",740812, "F",120415,"ZE184226B"]
-    return dbInfo
+    PASSNUM = line2[0:9]
+    CHECK1 = line2[9]
+    countrcode = line2[10:13]
+    BIRTHDATE = line2[13:19]
+    CHECK2 = line2[19]
+    GENDER = line2[20]
+    EXPDATE = line2[21:27]
+    CHECK3 = line2[27]
+    PERSNUM = line2[28:]
+    PERSNUM = PERSNUM.replace('<', "")
+    CHECK4 = PERSNUM[-1]
+    PERSNUM = PERSNUM[:-1]
+    # creating Array for Comparison Purposes
+    line2_array.append(PASSNUM)
+    line2_array.append(CHECK1)
+    line2_array.append(countrcode)
+    line2_array.append(BIRTHDATE)
+    line2_array.append(CHECK2)
+    line2_array.append(GENDER)
+    line2_array.append(EXPDATE)
+    line2_array.append(CHECK3)
+    line2_array.append(PERSNUM)
+    line2_array.append(CHECK4)
 
-def calcCheck(dbInfo): 
-    #Assigning number values to letters
-    #can only have 1 letter at a time
+    return line1_array, line2_array
+
+
+# Requirement3: Encode
+# function to mock a call to a database to return information
+def get_from_database():
+    db_info = ["P","REU","MCFARLAND","TRINITY","AMITY","Q683170H1","REU",640313,"M",690413,"UK128819I"]
+    return db_info
+
+
+def calc_check(db_info):
+    # Assigning number values to letters
+    # can only have 1 letter at a time
     values = dict()
     for index, letter in enumerate(string.ascii_uppercase):
         values[letter] = index + 10
-    #print(values["C"])
 
-    #breaking up strings/numbers into arrays of characters
+    # print(values["C"])
+
+    # breaking up strings/numbers into arrays of characters
     def split(info):
-        splitChar = []
+        split_char = []
         if type(info) is str:
             for letter in info:
-                splitChar.append(letter)
+                split_char.append(letter)
         else:
-            #splitChar = [int(a) for a in str(info)]
-            splitChar = list(map(int, str(info)))
+            # split_Char = [int(a) for a in str(info)]
+            split_char = list(map(int, str(info)))
+        return split_char
 
-        return splitChar
-
-    #this function assigns numeric values to letters/number
-    #pass in an array that represents the split characters of a term (like DOB or passport #)
-    #this split array is generated by split(), which ceates a splitChar array
-    #the output is an array (numericVal) of the corresponding number values, type int
-    def assignVal(splitArr):
-        numericVal = []
-        for value in splitArr:
-            if (value == "1" or value == "2" or value == "3" or value == "4" or value == "5" or value == "6" or value == "7" or value == "8" or value == "9" or value == "0"):
-                numericVal.append(int(value))
+    # this function assigns numeric values to letters/number
+    # pass in an array that represents the split characters of a term (like DOB or passport #)
+    # this split array is generated by split(), which ceates a splitChar array
+    # the output is an array (numericVal) of the corresponding number values, type int
+    def assign_val(split_arr):
+        numeric_val = []
+        for value in split_arr:
+            if value in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0'):
+                numeric_val.append(int(value))
             elif type(value) is int:
-                numericVal.append(value)
+                numeric_val.append(value)
             else:
-                numericVal.append(values[value])
+                numeric_val.append(values[value])
 
-        return numericVal
+        return numeric_val
 
-    #this function calculates the final check number
-    #takes in the resulting array of ints (numericVal[]) from assignVal() function
-    #multiplies each number by weighting factor 7,3,1
-    #sums all numbers
-    #takes mod10 of the sum
-    #the result is an integer value - the check digit
-    def finalCheckDig(numArr):
-        multFactors = []
+    # this function calculates the final check number
+    # takes in the resulting array of ints (numericVal[]) from assignVal() function
+    # multiplies each number by weighting factor 7,3,1
+    # sums all numbers
+    # takes mod10 of the sum
+    # the result is an integer value - the check digit
+    def final_check_dig(num_arr):
+        mult_factors = []
         i = 0
-        while i < len(numArr):
-            multFactors.append(numArr[i]*7)
-            multFactors.append(numArr[i+1]*3)
-            multFactors.append(numArr[i+2]*1)
+        while i < len(num_arr):
+            mult_factors.append(num_arr[i] * 7)
+            mult_factors.append(num_arr[i + 1] * 3)
+            mult_factors.append(num_arr[i + 2] * 1)
             i = i + 3
 
         sum = 0
-        for num in multFactors:
+        for num in mult_factors:
             sum += num
 
-        checkDig = sum%10
-        return checkDig
+        check_dig = sum % 10
+        return check_dig
 
+    # check digit for passport number (initially a string)
+    passport_no = final_check_dig(assign_val(split(db_info[5])))
 
-    #check digit for passport number (initially a string)
-    passportNo = finalCheckDig(assignVal(split(dbInfo[5])))
+    # check digit for birth date (initially a number)
+    birthday = final_check_dig(assign_val(split(db_info[7])))
 
-    #check digit for birth date (initially a number)
-    birthday = finalCheckDig(assignVal(split(dbInfo[7])))
+    # check digit for expiration date (initially a number)
+    expiration = final_check_dig(assign_val(split(db_info[9])))
 
+    # check digit for personal number (initially a string)
+    personal_no = final_check_dig(assign_val(split(db_info[10])))
 
-    #check digit for expiration date (initially a number)
-    expiration = finalCheckDig(assignVal(split(dbInfo[9])))
+    # array with final 4 check digits [passport, DOB, exp, personal #]
+    check_digits = [passport_no, birthday, expiration, personal_no]
+    # delete print statement after!!!
 
+    return check_digits
 
-    #check digit for personal number (initially a string)
-    personalNo = finalCheckDig(assignVal(split(dbInfo[10])))
+def encode_strings(db_info):
+    return_string = ""
+    mrz_line1 = ""
+    mrz_line2 = ""
+    db_check_dig = []
+    db_line1 = db_info[0:5]
+    db_line2 = db_info[5:]
+    db_check_dig = calc_check(db_info)
 
-    #array with final 4 check digits [passport, DOB, exp, personal #]
-    checkDigits = [passportNo, birthday, expiration, personalNo]
-    #delete print statement after!!!
-    return checkDigits
+    # encode requirement code here
+    mrz_line1 = mrz_line1 + db_line1[0] + "<" + db_line1[1] + db_line1[2] + "<<" + db_line1[3] + "<" + db_line1[4]
+    mrz_line1 = mrz_line1.ljust(44, "<")
 
-def encodeStrings(dbInfo):
-    returnString=""
-    mrzLine1=""
-    mrzLine2=""
-    dbCheckDig=[]
-    dbLine1=dbInfo[0:5]
-    dbLine2=dbInfo[5:]
-    dbCheckDig=calcCheck(dbInfo)
+    mrz_line2 = mrz_line2 + str(db_line2[0]) + str(db_check_dig[0]) + str(db_line2[1]) + str(db_line2[2]) + str(
+        db_check_dig[1]) + str(db_line2[3]) + str(db_line2[4]) + str(db_check_dig[2]) + str(db_line2[5])
+    mrz_line2 = mrz_line2.ljust(44, "<")
+    mrz_line2 = mrz_line2[:-1]
+    mrz_line2 = mrz_line2 + str(db_check_dig[3])
+    return_string = mrz_line1 + ";" + mrz_line2
+    return return_string
+scan_Info = "P<REUMCFARLAND<<TRINITY<AMITY<<<<<<<<<<<<<<<;Q683170H11REU6403131M6904133UK128819I<<<<<<9"
+# Requirement4: reporting miss matching information between encode and decode
+def report_difference(scan_info, db_info):
+    line1_equal = False
+    line2_equal = False
 
-    #encode requirement code here
-    mrzLine1=mrzLine1+dbLine1[0]+"<"+dbLine1[1]+dbLine1[2]+"<<"+dbLine1[3]+"<"+dbLine1[4]
-    mrzLine1=mrzLine1.ljust(44,"<")
-    
-    mrzLine2=mrzLine2+str(dbLine2[0])+str(dbCheckDig[0])+str(dbLine2[1])+str(dbLine2[2])+str(dbCheckDig[1])+str(dbLine2[3])+str(dbLine2[4])+str(dbCheckDig[2])+str(dbLine2[5])
-    mrzLine2=mrzLine2.ljust(44,"<")
-    mrzLine2=mrzLine2[:-1]
-    mrzLine2=mrzLine2+str(dbCheckDig[3])
-    returnString=mrzLine1+";"+mrzLine2
-    return returnString
+    # get scanned chck digits
+    line1_struct, line2_struct = decode_strings(scan_info)
 
-#Requirement4: reporting miss matching information between encode and decode
-def reportDifference(scanInfo,dbInfo):
-    line1Equal = False
-    line2Equal = False
+    # get calculated check digits
+    db_line1, db_line2 = decode_strings(encode_strings(db_info))
 
-    #get scanned chck digits
-    line1Struct,line2Struct=decodeStrings(scanInfo)
-    
-    #get calculated check digits 
-    dbLine1,dbLine2 = decodeStrings(encodeStrings(dbInfo))
-
-    if line1Struct == dbLine1:
-        line1Equal = True
+    if line1_struct == db_line1:
+        line1_equal = True
     else:
-        line1Equal = False
-    
-    if line2Struct[1]==dbLine2[1] and line2Struct[4]==dbLine2[4] and line2Struct[7]==dbLine2[7] and line2Struct[-1]==dbLine2[-1]:
-        line2Equal = True
+        line1_equal = False
+    if line2_struct[1]==db_line2[1]and line2_struct[4]==db_line2[4]and line2_struct[7]==db_line2[7]and line2_struct[-1]==db_line2[-1]:
+        line2_equal = True
     else:
-        line2Equal = False
+        line2_equal = False
 
-    if line1Equal and line2Equal:
+    if line1_equal and line2_equal:
         return "Database Matches Scanned Record"
-    elif line1Equal and not line2Equal: 
-        if line2Struct[1]!=dbLine2[1]:
+    if line1_equal and not line2_equal:
+        if line2_struct[1] != db_line2[1]:
             return "Line 2 from the database does not match what was scanned check digit 1 did not match"
-        if line2Struct[4]!=dbLine2[4]:
+        if line2_struct[4] != db_line2[4]:
             return "Line 2 from the database does not match what was scanned check digit 2 did not match"
-        if line2Struct[7]!=dbLine2[7]:
+        if line2_struct[7] != db_line2[7]:
             return "Line 2 from the database does not match what was scanned check digit 3 did not match"
-        if line2Struct[-1]!=dbLine2[-1]:
+        if line2_struct[-1] != db_line2[-1]:
             return "Line 2 from the database does not match what was scanned check digit 4 did not match"
-    elif line2Equal and not line1Equal:
+    if line2_equal and not line1_equal:
         return "Line 1 from the database does not match what was scanned"
     else:
         return "Neither Line from the database matches what was scanned"
 
 
+# ------------------------- Main Code ------------------------
+def start_func():
+    scan_info = scan_mrz()
+    #line1_struct, line2_struct = decode_strings(scanInfo)
+    db_info = get_from_database()
+    encode_strings(db_info)
+    print(report_difference(scan_info, db_info))
 
-#------------------------- Main Code ------------------------
-def startFunc():
-    scanInfo = scanMRZ()
-    line1Struct,line2Struct=decodeStrings(scanInfo)
-    dbInfo=getFromDatabase()
-    encodeStrings(dbInfo)
-    print(reportDifference(scanInfo,dbInfo))
 
 if __name__ == '__main__':
-    startFunc()
+    start_func()
