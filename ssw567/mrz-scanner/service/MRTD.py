@@ -247,14 +247,18 @@ def report_difference(scan_info, db_info):
         return "Neither Line from the database matches what was scanned"
 
 
-# ------------------------- Main Code ------------------------
-def start_func():
-    scan_info = scan_mrz()
-    #line1_struct, line2_struct = decode_strings(scanInfo)
-    db_info = get_from_database()
-    encode_strings(db_info)
-    print(report_difference(scan_info, db_info))
 
+#------------------------- Main Code ------------------------
+def startFunc(scanValue, dbValue):
+    if scanValue.strip() and dbValue:
+        scanInfo = scanValue
+        dbInfo = dbValue
+    else:
+        scanInfo = scanMRZ()
+        dbInfo=getFromDatabase()
+    line1Struct,line2Struct=decodeStrings(scanInfo)
+    encodeStrings(dbInfo)
+    #print(reportDifference(scanInfo,dbInfo))
 
 if __name__ == '__main__':
     start_func()
