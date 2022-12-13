@@ -131,7 +131,7 @@ def calcCheck(dbInfo):
         while i < len(numArr):
             multFactors.append(numArr[i] * 7)
             multFactors.append(numArr[i + 1] * 3)
-            multFactors.append(numArr[i + 2] * 1)
+            multFactors.append(numArr[i + 2])
             i = i + 3
 
         sum = 0

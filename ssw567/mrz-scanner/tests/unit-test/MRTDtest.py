@@ -4,7 +4,6 @@ from for_test_MRTD import *
 class TestMRTD(unittest.TestCase):
     # Define test cases that input has two line or not
     scanInfo="P<REUMCFARLAND<<TRINITY<AMITY<<<<<<<<<<<<<<<;Q683170H11REU6403131M6904133UK128819I<<<<<<9"
-    incorrectScanInfo="P<CRIVEGA<<ELSIE<TAVIAN<<<<<<<<<<<<<<<<<<<<<;D553838Y29CRI9001181F0111148FT004677S<<<<<<8"
     dbInfo=["P","REU","MCFARLAND","TRINITY","AMITY","Q683170H1","REU",640313,"M",690413,"UK128819I"]
     #this test case is for scanMRZ
     def testScanMRZ(self):
@@ -70,8 +69,9 @@ class TestMRTD(unittest.TestCase):
     def testReportDiffrenceF(self):
         self.assertNotEqual(reportDifference(scanInfo,dbInfo),"Neither Line from the database matches what was scanned", "not getting any error of mismatched of EITHER LINE from OUR DATA")
 
+    #this test case is for making sure the system catches an incorrect check digit for Personal Number
     def testReportDifferenceG(self):
-        self.assertEqual(reportDifference(incorrectScanInfo,dbInfo),"Line 2 from the database does not match what was scanned check digit 4 did not match", "System caught bad data")
+        self.assertEqual(reportDifference("P<REUMCFARLAND<<TRINITY<AMITY<<<<<<<<<<<<<<<;Q683170H11REU6403131M6904133UK128819I<<<<<<7",dbInfo),"Line 2 from the database does not match what was scanned check digit 4 did not match", "System caught bad data")
 
 
 if __name__ == '__main__':
