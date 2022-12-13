@@ -1,239 +1,75 @@
-import string
+import unittest
+from for_test_MRTD import *
 
-# Variable Initialization
-# line1 variables
-PASSPORTTYPE = ""
-ISSCOUNTRY = ""
-NAMEHOLD = ""
+class TestMRTD(unittest.TestCase):
+    # Define test cases that input has two line or not
+    scanInfo="P<REUMCFARLAND<<TRINITY<AMITY<<<<<<<<<<<<<<<;Q683170H11REU6403131M6904133UK128819I<<<<<<9"
+    dbInfo=["P","REU","MCFARLAND","TRINITY","AMITY","Q683170H1","REU",640313,"M",690413,"UK128819I"]
+    #this test case is for scanMRZ
+    def testScanMRZ(self):
+        self.assertEqual(scanMRZ(),scanInfo,"SCAN DECODED DATA ")
 
-# line1 variables
-PASSNUM = -1
-COUNRCODE = ""
-BIRTHDATE = -1
-GENDER = ""
-EXPDATE = -1
-PERSNUM = -1
+    #this test case is for getting data from database
+    def testGetFromDatabase(self):
+        self.assertEqual(getFromDatabase(),dbInfo, "DATABASE is CORRECT")
 
-# check variables
-CHECK1 = -1
-CHECK2 = -1
-CHECK3 = -1
-CHECK4 = -1
+    #this is test case for decode string
+    def testDecodeString(self):
+        self.assertEqual(decodeStrings(scanInfo),(['P','REU','MCFARLANDTRINITYAMITY'],['Q683170H1','1','REU','640313','1','M','690413','3','UK128819I','9']),'DECODED STRING IN CORRECT FORMAT')
 
+    #this test case for checking valid all digit number
+    def testCalcCheck(self):
+        self.assertEqual(calcCheck(dbInfo),([1, 1, 3, 9]),"valid all digit")
 
-# Requirement 1: Function mocking the hardware device scanner
-def scan_mrz():
-    print("- - - Scanning MRZ - - -")
-    scan_info="P<REUMCFARLAND<<TRINITY<AMITY<<<<<<<<<<<<<<<;Q683170H11REU6403131M6904133UK128819I<<<<<<9"
-    return scan_info
+    #this test case for checking valid for PASSPORT number
+    def testCalcCheckA(self):
+        self.assertEqual(calcCheck(dbInfo)[0], 1, "valid PASSPORT number")
 
+    #this test case for checking valid for BIRTHDATE number
+    def testCalcCheckB(self):
+        self.assertEqual(calcCheck(dbInfo)[1], 1, "valid BIRTHDATE number")
 
-# Requirement 2: Decoding the Strings
-def decode_strings(scan_info):
-    line1_array = []
-    line2_array = []
+    #this test case for checking valid for EXPIRATION DATE number
+    def testCalcCheckC(self):
+        self.assertEqual(calcCheck(dbInfo)[2], 3, "valid EXPIRATION DATE number")
 
-    # breaking the line into line 1 and line 2
-    temp = scan_info.split(';')
-    line1 = temp[0]
-    line2 = temp[1]
-    # line1
-    passport_type = line1[0]
-    iss_country = line1[2:5]
-    name_hold = line1[5:]
-    name_hold = name_hold.replace('<', "")  # Need to get a way to get name separated
-    # creating Array for Comparison Purposes
-    line1_array.append(passport_type)
-    line1_array.append(iss_country)
-    line1_array.append(name_hold)
+    #this test case for checking valid for PERSONAL number
+    def testCalcCheckD(self):
+        self.assertEqual(calcCheck(dbInfo)[3], 9, "valid PERSONAL number")
 
-    # defining as global variable
-    global PASSNUM
-    global BIRTHDATE
-    global GENDER
-    global EXPDATE
-    global PERSNUM
-    global CHECK1
-    global CHECK2
-    global CHECK3
-    global CHECK4
+    #this test for checking that string is ENCODED OR NOT
+    def testEncodeStrings(self):
+        self.assertEqual(encodeStrings(dbInfo),scanInfo, "string is ENCODED OR NOT")
 
-    PASSNUM = line2[0:9]
-    CHECK1 = line2[9]
-    countrcode = line2[10:13]
-    BIRTHDATE = line2[13:19]
-    CHECK2 = line2[19]
-    GENDER = line2[20]
-    EXPDATE = line2[21:27]
-    CHECK3 = line2[27]
-    PERSNUM = line2[28:]
-    PERSNUM = PERSNUM.replace('<', "")
-    CHECK4 = PERSNUM[-1]
-    PERSNUM = PERSNUM[:-1]
-    # creating Array for Comparison Purposes
-    line2_array.append(PASSNUM)
-    line2_array.append(CHECK1)
-    line2_array.append(countrcode)
-    line2_array.append(BIRTHDATE)
-    line2_array.append(CHECK2)
-    line2_array.append(GENDER)
-    line2_array.append(EXPDATE)
-    line2_array.append(CHECK3)
-    line2_array.append(PERSNUM)
-    line2_array.append(CHECK4)
+    #this test case is for comparison of ENCODED and DECODED data
+    def testReportDiffrence(self):
+        self.assertEqual(reportDifference(scanInfo,dbInfo),"Database Matches Scanned Record","comparison of ENCODED and DECODED data")
 
-    return line1_array, line2_array
+    #this test case is for not getting any error of mismatched PASSPORT number
+    def testReportDiffrenceA(self):
+        self.assertNotEqual(reportDifference(scanInfo,dbInfo),"Line 2 from the database does not match what was scanned check digit 1 did not match", "not getting any error of mismatched PASSPORT number")
 
+    #this test case is for not getting any error of mismatched BIRTHDATE number
+    def testReportDiffrenceB(self):
+        self.assertNotEqual(reportDifference(scanInfo,dbInfo),"Line 2 from the database does not match what was scanned check digit 2 did not match", "not getting any error of mismatched BIRTHDATE number")
 
-# Requirement3: Encode
-# function to mock a call to a database to return information
-def get_from_database():
-    db_info = ["P","REU","MCFARLAND","TRINITY","AMITY","Q683170H1","REU",640313,"M",690413,"UK128819I"]
-    return db_info
+    #this test case is for not getting any error of mismatched EXPIRATION DATE number
+    def testReportDiffrenceC(self):
+        self.assertNotEqual(reportDifference(scanInfo,dbInfo),"Line 2 from the database does not match what was scanned check digit 3 did not match", "not getting any error of mismatched EXPIRATION DATE number")
 
+    #this test case is for not getting any error of mismatched PERSONAL number
+    def testReportDiffrenceD(self):
+        self.assertNotEqual(reportDifference(scanInfo,dbInfo),"Line 2 from the database does not match what was scanned check digit 4 did not match", "not getting any error of mismatched PERSONAL number")
 
-def calc_check(db_info):
-    # Assigning number values to letters
-    # can only have 1 letter at a time
-    values = dict()
-    for index, letter in enumerate(string.ascii_uppercase):
-        values[letter] = index + 10
+    #this test case is for not getting any error of mismatched of LINE1 code with our DECODED CODE
+    def testReportDiffrenceE(self):
+        self.assertNotEqual(reportDifference(scanInfo,dbInfo),"Line 1 from the database does not match what was scanned", "not getting any error of mismatched of LINE1 code with our DECODED CODE")
 
-    # print(values["C"])
-
-    # breaking up strings/numbers into arrays of characters
-    def split(info):
-        split_char = []
-        if type(info) is str:
-            for letter in info:
-                split_char.append(letter)
-        else:
-            # split_Char = [int(a) for a in str(info)]
-            split_char = list(map(int, str(info)))
-        return split_char
-
-    # this function assigns numeric values to letters/number
-    # pass in an array that represents the split characters of a term (like DOB or passport #)
-    # this split array is generated by split(), which ceates a splitChar array
-    # the output is an array (numericVal) of the corresponding number values, type int
-    def assign_val(split_arr):
-        numeric_val = []
-        for value in split_arr:
-            if value in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0'):
-                numeric_val.append(int(value))
-            elif type(value) is int:
-                numeric_val.append(value)
-            else:
-                numeric_val.append(values[value])
-
-        return numeric_val
-
-    # this function calculates the final check number
-    # takes in the resulting array of ints (numericVal[]) from assignVal() function
-    # multiplies each number by weighting factor 7,3,1
-    # sums all numbers
-    # takes mod10 of the sum
-    # the result is an integer value - the check digit
-    def final_check_dig(num_arr):
-        mult_factors = []
-        i = 0
-        while i < len(num_arr):
-            mult_factors.append(num_arr[i] * 7)
-            mult_factors.append(num_arr[i + 1] * 3)
-            mult_factors.append(num_arr[i + 2] * 1)
-            i = i + 3
-
-        sum = 0
-        for num in mult_factors:
-            sum += num
-
-        check_dig = sum % 10
-        return check_dig
-
-    # check digit for passport number (initially a string)
-    passport_no = final_check_dig(assign_val(split(db_info[5])))
-
-    # check digit for birth date (initially a number)
-    birthday = final_check_dig(assign_val(split(db_info[7])))
-
-    # check digit for expiration date (initially a number)
-    expiration = final_check_dig(assign_val(split(db_info[9])))
-
-    # check digit for personal number (initially a string)
-    personal_no = final_check_dig(assign_val(split(db_info[10])))
-
-    # array with final 4 check digits [passport, DOB, exp, personal #]
-    check_digits = [passport_no, birthday, expiration, personal_no]
-    # delete print statement after!!!
-
-    return check_digits
-
-def encode_strings(db_info):
-    return_string = ""
-    mrz_line1 = ""
-    mrz_line2 = ""
-    db_check_dig = []
-    db_line1 = db_info[0:5]
-    db_line2 = db_info[5:]
-    db_check_dig = calc_check(db_info)
-
-    # encode requirement code here
-    mrz_line1 = mrz_line1 + db_line1[0] + "<" + db_line1[1] + db_line1[2] + "<<" + db_line1[3] + "<" + db_line1[4]
-    mrz_line1 = mrz_line1.ljust(44, "<")
-
-    mrz_line2 = mrz_line2 + str(db_line2[0]) + str(db_check_dig[0]) + str(db_line2[1]) + str(db_line2[2]) + str(
-        db_check_dig[1]) + str(db_line2[3]) + str(db_line2[4]) + str(db_check_dig[2]) + str(db_line2[5])
-    mrz_line2 = mrz_line2.ljust(44, "<")
-    mrz_line2 = mrz_line2[:-1]
-    mrz_line2 = mrz_line2 + str(db_check_dig[3])
-    return_string = mrz_line1 + ";" + mrz_line2
-    return return_string
-scan_Info = "P<REUMCFARLAND<<TRINITY<AMITY<<<<<<<<<<<<<<<;Q683170H11REU6403131M6904133UK128819I<<<<<<9"
-# Requirement4: reporting miss matching information between encode and decode
-def report_difference(scan_info, db_info):
-    line1_equal = False
-    line2_equal = False
-
-    # get scanned chck digits
-    line1_struct, line2_struct = decode_strings(scan_info)
-
-    # get calculated check digits
-    db_line1, db_line2 = decode_strings(encode_strings(db_info))
-
-    if line1_struct == db_line1:
-        line1_equal = True
-    else:
-        line1_equal = False
-    if line2_struct[1]==db_line2[1]and line2_struct[4]==db_line2[4]and line2_struct[7]==db_line2[7]and line2_struct[-1]==db_line2[-1]:
-        line2_equal = True
-    else:
-        line2_equal = False
-
-    if line1_equal and line2_equal:
-        return "Database Matches Scanned Record"
-    if line1_equal and not line2_equal:
-        if line2_struct[1] != db_line2[1]:
-            return "Line 2 from the database does not match what was scanned check digit 1 did not match"
-        if line2_struct[4] != db_line2[4]:
-            return "Line 2 from the database does not match what was scanned check digit 2 did not match"
-        if line2_struct[7] != db_line2[7]:
-            return "Line 2 from the database does not match what was scanned check digit 3 did not match"
-        if line2_struct[-1] != db_line2[-1]:
-            return "Line 2 from the database does not match what was scanned check digit 4 did not match"
-    if line2_equal and not line1_equal:
-        return "Line 1 from the database does not match what was scanned"
-    else:
-        return "Neither Line from the database matches what was scanned"
-
-
-# ------------------------- Main Code ------------------------
-def start_func():
-    scan_info = scan_mrz()
-    #line1_struct, line2_struct = decode_strings(scanInfo)
-    db_info = get_from_database()
-    encode_strings(db_info)
-    print(report_difference(scan_info, db_info))
+    #this test case is for not getting any error of mismatched of EITHER LINE from OUR DATA
+    def testReportDiffrenceF(self):
+        self.assertNotEqual(reportDifference(scanInfo,dbInfo),"Neither Line from the database matches what was scanned", "not getting any error of mismatched of EITHER LINE from OUR DATA")
 
 
 if __name__ == '__main__':
-    start_func()
+    print('Running unit tests')
+    unittest.main()
