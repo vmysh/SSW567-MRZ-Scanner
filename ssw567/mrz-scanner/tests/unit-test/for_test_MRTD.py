@@ -21,27 +21,6 @@
 
 import string
 
-# Variable Initialization
-# line1 variables
-passportType = ""
-issCountry = ""
-nameHold = ""
-
-# line1 variables
-passNum = -1
-countrCode = ""
-birthDate = -1
-gender = ""
-expDate = -1
-persNum = -1
-
-# check variables
-check1 = -1
-check2 = -1
-check3 = -1
-check4 = -1
-
-
 # Requirement 1: Function mocking the hardware device scanner
 def scanMRZ():
     print("- - - Scanning MRZ - - -")
